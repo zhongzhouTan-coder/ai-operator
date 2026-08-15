@@ -14,13 +14,13 @@ def npu_vector_add_kernel(
     vector_len: tl.constexpr,
     BLOCK_SIZE: tl.constexpr,
 ):
-    pid = tl.program_id(aix=0)
+    pid = tl.program_id(axis=0)
     offset = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
-    lem_mask = offset < vector_len
-    x1 = tl.load(x + offset, mask=lem_mask, other=0)
-    y1 = tl.load(y + offset, mask=lem_mask, other=0)
+    len_mask = offset < vector_len
+    x1 = tl.load(x + offset, mask=len_mask, other=0)
+    y1 = tl.load(y + offset, mask=len_mask, other=0)
     z1 = x1 + y1
-    tl.store(z + offset, z1, mask=lem_mask)
+    tl.store(z + offset, z1, mask=len_mask)
 
 
 def run(dtype_name):
